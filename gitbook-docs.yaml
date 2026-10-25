@@ -1,0 +1,11 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: Tokens to Agents
+  structure:
+    - type: space
+      key: space-1
+      title: Main
+      path: documentation
+      default: true
+      content:
+        directory: ./documentation
