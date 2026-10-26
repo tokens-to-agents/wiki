@@ -26,7 +26,7 @@ layout:
 ### Welcome to Tokens to Agents **✨**
 
 {% hint style="warning" %}
-**Work in progress.** Pages are being added; most sections are still empty.
+**Work in progress.** Pages are being added.
 {% endhint %}
 
 Tokens to Agents aims to cover AI as a whole: how models work, the tools and models available, the companies behind them and the news of the field. Every page is built around diagrams; the text explains them for readers who want more detail.

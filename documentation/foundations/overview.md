@@ -70,7 +70,7 @@ On a Mac, the GPU has no separate VRAM: it uses the same **unified memory** as t
   * [GPU & memory](inference/gpu-and-memory.md): why AI runs on GPUs, why memory matters more than raw power, and how software reaches the chip.
   * [Text generation](inference/text-generation/): tokens, the generation loop and the context window, with [Sampling](inference/text-generation/sampling.md) (the settings that pick each token) and [KV cache](inference/text-generation/kv-cache.md) (the memory of a conversation).
   * [Image & video](inference/image-and-video.md): diffusion, the latent space, CFG and video.
-* [Glossary](glossary.md): every term of the section, with its other names (parameter and weight, VRAM and GPU memory…).
+* [Glossary](../glossary.md): every term of the section, with its other names (parameter and weight, VRAM and GPU memory…).
 
 ### Resources
 

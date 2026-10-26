@@ -23,7 +23,7 @@ layout:
 
 # Inside a model
 
-This page opens a model once it is saved: what its versions contain, how one number is stored, and how big the whole is. It uses **Llama 3.1 8B Instruct** as its example: every number in it comes from that model. Where the files come from is shown on the [Model](./) map; terms with several names are listed in the [Glossary](../glossary.md).
+This page opens a model once it is saved: what its versions contain, how one number is stored, and how big the whole is. It uses **Llama 3.1 8B Instruct** as its example: every number in it comes from that model. Where the files come from is shown on the [Model](./) map; terms with several names are listed in the [Glossary](../../glossary.md).
 
 {% hint style="info" %}
 **A model is stored as named tables of numbers.** Its size is the number of parameters times the space each one takes: 8.03 billion parameters at 2 bytes each = 16.1 GB in the BF16 version.
