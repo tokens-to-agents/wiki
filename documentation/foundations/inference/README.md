@@ -64,13 +64,13 @@ The prompt is everything the model reads before it answers, a photo included; so
 
 On a Mac, the GPU and the processor share one **unified memory**, so there is no separate VRAM: the model sits in the same memory as everything else.
 
-#### How fast it can go
+### How fast it can go
 
 Every token reads all the weights from VRAM, so the speed ceiling is the memory bandwidth divided by the size of the weights: 1,792 GB/s ÷ 4.92 GB = about 364 tokens per second for this example. Real speed is lower, since the KV cache is read too and the engine has other work. A version twice as small can go up to twice as fast, which is one reason to [quantize](../model/quantization/).
 
 On a server, one GPU answers many users at once. Their tokens are processed together (**batching**), so each step still reads the weights once but writes one token for every user in the batch: the total output grows with the batch, until the GPU's arithmetic, rather than its memory, becomes the limit. This is how a provider spreads the cost of its hardware (see **Serving at scale**).
 
-#### Resources
+### Resources
 
 * GPU specs: [NVIDIA GeForce RTX 5090](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/)
 * Picture in: [Google, What's new in Gemma 3](https://developers.googleblog.com/en/gemma-explained-whats-new-in-gemma-3) (SigLIP encoder, 896 × 896, 256 tokens) | Sound: [OpenAI, Whisper large-v3 model card](https://huggingface.co/openai/whisper-large-v3) (128 frequency bands, 30-second windows)

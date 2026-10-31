@@ -68,7 +68,7 @@ A version is like a spreadsheet workbook: a short description of the design (the
 * **Tensor:** A named table of weights. Most are **matrices**, written \[rows × columns]: `blk.0.attn_q.weight` is \[4096 × 4096], so 16.8 million weights. In a `.safetensors` file the same table is named `model.layers.0.self_attn.q_proj.weight`.
 * **Layer (block):** The network is a stack of 32 identical layers, also called blocks: `blk.0` to `blk.31` in a `.gguf`, `model.layers.0` to `model.layers.31` in a `.safetensors` file. Each layer holds the same 9 tensors with different values.
 * **Width (hidden size):** 4096 neurons per layer. Meta's designers chose it before training, like the number of layers; training only fills in the values. Llama 3.1 70B is wider (8192). Every version of Llama 3.1 8B has the same width and the same tensor shapes.
-* **Token vs parameter:** A token is a piece of text from the model's fixed vocabulary. Training texts, your prompt and the model's answers are all cut into tokens. While the model reads a token, it becomes a list of 4096 numbers, one per neuron, computed on the fly and then discarded. Only the weights are stored.
+* **Token vs parameter:** A token is a piece of text from the model's fixed vocabulary; training texts, your prompt and the model's answers are all cut into tokens. While the model reads a token, it copies the token's row of the token table (the embedding table): a list of 4096 numbers, its **embedding**, which the layers then rework. Only the weights are stored in the file; the lists are computed as the model runs and then discarded.
 * **No stored content:** The files hold no sentences, pictures or database. The only words in them are the metadata and the vocabulary.
 
 <details>
