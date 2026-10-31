@@ -31,27 +31,19 @@ A language model (LLM) does one thing: given a text, it scores every possible ne
 
 ### Tokens
 
-A **token** is a piece of text from a fixed vocabulary: a whole word, part of a word, a space plus a word, or punctuation. The model reads and writes tokens, never individual letters. The vocabulary is fixed before training, so the training texts, your prompt and the model's answers are all cut into the same tokens.
-
-<figure><img src="../../../.gitbook/assets/0.text-generation_ai-text-tokens_v1.png" alt=""><figcaption></figcaption></figure>
-
-* **Vocabulary:** Each model family has its own list of tokens. Llama 3.1 has 128,256; OpenAI's GPT-4o tokenizer has about 200,000.
-* **Numbers:** The model knows each token by its number, its row in the token table (see [how the tables connect](../../model/inside-a-model.md#how-the-tables-connect)). In Llama 3.1, "The" is token 791 and " Paris" token 12366.
-* **Letters:** "Strawberry" is three tokens (`Str`, `aw`, `berry`), which is why models miscount letters while handling complex topics well.
-* **Languages:** Tokenizers are built mostly from English text. The same paragraph took 51 tokens in English and 61 in French with the GPT-4o tokenizer (+20 %), 69 with the older GPT-4 tokenizer (+35 %).
-* **Cost:** More tokens mean more memory, slower generation and a higher bill on paid APIs, for the same content.
+A **token** is a piece of text from a fixed vocabulary, known to the model by its number: a whole word, part of a word, a space plus a word, or punctuation. The model reads and writes tokens, never letters. A separate program, the tokenizer, cuts the text into tokens before the model runs and turns them back into text after it. See [Tokens](tokens.md) for the pieces, the tokenizer and the vocabulary.
 
 ### One token at a time
 
 Each step runs the whole model once and returns one score per token of the vocabulary. A small program, the **sampler**, picks one of them; it is appended to the text and the next step starts. Before the first step, the prompt is read in one go (the prefill); after it, each step only has to compute the newest token, because what the earlier tokens leave behind is kept in the [KV cache](kv-cache.md).
 
-<figure><img src="../../../.gitbook/assets/1.text-generation_ai-text-loop_v1 (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/1.text-generation_ai-text-loop_v2.png" alt=""><figcaption></figcaption></figure>
 
 1. **Context:** Everything the model sees: system prompt, conversation, and the answer so far.
-2. **Model:** One full pass through its 32 layers, for the newest token.
-3. **Scores:** One per possible token, converted to probabilities that add up to 100 %.
+2. **Model:** One full pass for the newest token: the token table gives its list, the 32 layers rework it, and the output table scores every possible next token. These tables are the model's weights; they do not change during use.
+3. **Scores:** One per possible token, converted to probabilities that add up to 100 % (see how the scores are computed).
 4. **Sampler:** Picks a token from that list, following your settings (see the [Sampling](sampling.md) page).
-5. **Append:** The token joins the context, and the loop starts again until an end-of-text token or a length limit.
+5. **Append:** The token joins the context, and the loop starts again until an end-of-text token or a length limit. Only the chosen token goes round the loop: at the next turn, its row is read from the token table. The output table never becomes the input.
 
 A 500-token answer means 500 passes through the model. The text appears progressively because it is produced progressively.
 
@@ -82,5 +74,5 @@ A too-small window cuts long documents without warning: the model then answers f
 
 ### Resources
 
-* Tokenizers: [llama3-tokenizer-js](https://github.com/belladoreai/llama3-tokenizer-js), used for the token numbers on this page | [gpt-tokenizer (o200k\_base, cl100k\_base)](https://github.com/niieani/gpt-tokenizer), used for the English and French counts
+* Tokenizers: [llama3-tokenizer-js](https://github.com/belladoreai/llama3-tokenizer-js), used for the token numbers on this page
 * Context defaults: [Ollama, context length](https://docs.ollama.com/context-length) | [llama.cpp server README](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)

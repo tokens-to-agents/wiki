@@ -4,7 +4,7 @@
 * [What is AI](what-is-ai.md)
 * [Getting started](getting-started.md)
 * [Glossary](glossary.md)
-* [Explorer](https://explorer-vxv3.vercel.app/)
+* [Explorer](https://explorer-one-phi.vercel.app/)
 
 ## History
 
@@ -29,6 +29,7 @@
 * [Inference](foundations/inference/README.md)
   * [GPU & memory](foundations/inference/gpu-and-memory.md)
   * [Text generation](foundations/inference/text-generation/README.md)
+    * [Tokens](foundations/inference/text-generation/tokens.md)
     * [Sampling](foundations/inference/text-generation/sampling.md)
     * [KV cache](foundations/inference/text-generation/kv-cache.md)
   * [Image & video](foundations/inference/image-and-video.md)
@@ -56,10 +57,10 @@
 ## Society
 
 * [Overview](society/overview.md)
-* [Regultation](society/regultation/README.md)
-  * [EU AI Act](society/regultation/eu-ai-act.md)
-  * [United States](society/regultation/united-states.md)
-  * [China](society/regultation/china.md)
+* [Regulation](society/regulation/README.md)
+  * [EU AI Act](society/regulation/eu-ai-act.md)
+  * [United States](society/regulation/united-states.md)
+  * [China](society/regulation/china.md)
 * [Risks](society/risks/README.md)
   * [Misuse](society/risks/misuse.md)
   * [Alignment & Control](society/risks/alignment-and-control.md)

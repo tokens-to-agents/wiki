@@ -31,11 +31,13 @@ The model returns odds for every possible next token; the **sampler** turns thos
 
 ### The sampler chain
 
-Sampling settings run as a chain. Each step receives the list of candidates from the previous one, changes it, and passes it on; the last step draws one token at random.
+Sampling settings run as a chain. Each step receives the list of candidates from the previous one, changes it, and passes it on; the last step draws one token at random. The list the chain starts from is fixed by the model's weights: the same prompt gives the same list every time. All the randomness is in the draw, which is why a fixed seed makes outputs repeatable.
 
-<figure><img src="../../../.gitbook/assets/0.sampler_ai-sampling-chain_v1.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/0.sampler_ai-sampling-chain_v2.png" alt=""><figcaption></figcaption></figure>
 
-* **Logits:** The raw score the model gives each of the 128,256 tokens of Llama 3.1's vocabulary, computed by its output table. **Softmax** converts them into probabilities that add up to 100 %.
+
+
+* **Logits:** The raw score the model gives each of the 128,256 tokens of Llama 3.1's vocabulary, computed by its output table. **Softmax** converts them into probabilities that add up to 100 % (both shown step by step in [from the final list to percentages](../../model/inside-a-model.md#from-the-final-list-to-percentages)).
 * **Penalties:** Lower the score of tokens that already appear in the text, to fight repetition.
 * **Filters (top-k, top-p, min-p):** Remove unlikely candidates without changing the relative odds of the others.
 * **Temperature:** Changes the odds themselves, without removing any candidate.

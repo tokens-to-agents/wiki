@@ -48,13 +48,13 @@ How training sets these numbers, and why the tables are multiplied rather than r
 
 A model is published on [Hugging Face](https://huggingface.co) in one or more **versions**: the same model saved at different precisions. A version can be one file or several, but every version holds the same tables.
 
-<figure><img src="../../.gitbook/assets/1.inside-a-model-ai-file-repo-to-weight_v1.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/1.inside-a-model-ai-file-repo-to-weight_v2.png" alt=""><figcaption></figcaption></figure>
 
 1. **Repository:** The model's page on Hugging Face. Meta's repository holds the BF16 version; community repositories hold quantized versions, one per format.
-2. **Version:** The whole model at one precision. The BF16 version is four `.safetensors` files (16.1 GB); the Q4\_K\_M version is one `.gguf` file (4.92 GB).
-3. **Files:** A `.safetensors` file holds only tables. Large versions are cut into files of about 5 GB, in order, without regard to layers, and `model.safetensors.index.json` says which table is in which file. The architecture (`config.json`) and the vocabulary (`tokenizer.json`) are separate. A `.gguf` file packs the tables, the architecture and the vocabulary together.
-4. **Tables:** The same 291 tables (spreadsheets) in every version: the token table, 9 tables in each of the 32 layers, a final small table, and the output table. Only their names change with the format. The `.gguf` conversion adds one tiny technical table (64 numbers used for positions), computed during conversion, not learned.
-5. **Weight:** One cell of one table. Weight A1 sits at the same place in every version; only the way its value is stored changes (16 bits in BF16, a 4-bit code plus a step in Q4\_K\_M).
+2. **Version:** The whole model at one precision: four `.safetensors` files for BF16 (16.1 GB), one `.gguf` file for Q4\_K\_M (4.92 GB).
+3. **Files:** A `.safetensors` file holds only tables, cut in order into files of at most 5 GB without regard to layers (layers 20 and 31 are split between two files); `model.safetensors.index.json` says which table is where. The architecture (`config.json`) and the vocabulary (`tokenizer.json`) are separate files; a `.gguf` file packs all three together.
+4. **Tables:** The same 291 tables in every version, all stored in the files: the token table, 9 tables in each of the 32 layers, a final norm and the output table. Their sizes add up to 8,030,261,248 weights, and at 2 bytes each to exactly the 16.06 GB of Meta's four files. Most language models share this layout; the number of tables per layer varies, and some models, such as Gemma and Llama 3.2 1B, use the token table again as the output table.
+5. **Weight:** One cell of one table, at the same place in every version; only its storage changes (16 bits in BF16, a 4-bit code plus a step in Q4\_K\_M).
 
 A small model works the same way with fewer files: Qwen3-0.6B fits in a single `model.safetensors` of 1.5 GB.
 
@@ -94,17 +94,33 @@ Every size here is a design choice: 4096 is the width, 1024 the size of keys and
 
 ### How the tables connect
 
-The tables are used in a fixed order. The diagram follows one token, " is", the last token of "The capital of France is".
+The tables are used in a fixed order. The diagram follows " is", the last token of "The capital of France is". The same path runs at every use, with the tables fixed, and in training, where a correction of every table follows (see How a model learns).
 
-<figure><img src="../../.gitbook/assets/3.inside-a-model_ai-model-how-tables-connect_v1 (1).png" alt=""><figcaption></figcaption></figure>
+{% hint style="warning" %}
+**The token table and the output table are two different tables.** "Input" and "output" only say where they sit, at the two ends of the model. Both are stored in the file (`model.embed_tokens.weight` and `lm_head.weight` in a `.safetensors` version, `token_embd.weight` and `output.weight` in a `.gguf`), both start random and are trained together, and neither turns into the other. The token table is also called the embedding table; the output table, the LM head.
+{% endhint %}
 
-1. **The token becomes a list:** A token is a piece of text from the model's vocabulary, known by its number: " is" is token 374 of 128,256. The token table has one row per token (128,256 rows, the vocabulary) and 4096 columns (the width, a design choice), and the model copies row 374: a list of 4096 numbers, such as \[0.0094, −0.0458, 0.0071, …] (illustrative values). Training set these numbers so that tokens used in similar ways get similar lists: the list is the model's learned description of the token.
-2. **The list goes through the 32 layers, then becomes scores:** Each layer adjusts the list, using the earlier tokens of the text, so that by the end it describes what should come next. The output table then turns it into one score per token of the vocabulary; here " Paris" (token 12366) scores highest, and the sampler picks a token (see [Inference](../inference/)). The lists are computed for each token and discarded: only the tables are stored.
+<figure><img src="../../.gitbook/assets/3.inside-a-model_ai-model-how-tables-connect_v2.png" alt=""><figcaption></figcaption></figure>
+
+1. **The token becomes a list:** The tokenizer gives each piece of text a number (see Tokens): " is" is 374. The number is only an address: the model copies row 374 of the token table, which has one row per token of the vocabulary (128,256) and 4096 columns (the width), and gets a list of 4096 numbers, such as \[0.0094, −0.0458, 0.0071, …]. Training set these numbers so that tokens used in similar ways get similar lists: the list is the model's learned description of the token. A picture has no row to copy: a vision encoder computes each list from one area of the picture (image tokens, on the [Inference](../inference/) map).
+2.  **The list goes through the 32 layers, then becomes scores:** Each layer adjusts the list using the earlier tokens of the text, so that by the end it describes what should come next. The output table turns it into one score per token, and the scores into percentages (see [from the final list to percentages](inside-a-model.md#from-the-final-list-to-percentages), below); here " Paris" (12366) scores highest, and the sampler picks a token (see [Inference](../inference/)). The lists are computed and discarded; only the tables are stored. At the next turn, the chosen token starts again at step 1 with its own row: only the token goes round the loop.
+
+    Why 32 layers: each layer works on the list the previous one made, so the model builds its result in steps. Anthropic traced this in Claude 3.5 Haiku: to complete "the capital of the state containing Dallas is", the model first represents Texas, then combines it with "capital" to give Austin. The layers are steps of one computation, not compartments for storage; in training, [backpropagation](how-a-model-learns.md#training) goes back through them from the last to the first.
 3. **Inside one layer:** The list meets the layer's 9 tables in two parts. Each table works like the [one-link diagram](inside-a-model.md#a-parameter-is-the-strength-of-a-link): a row of input neurons linked to a row of output neurons.
-   * **Attention (q, k, v, o):** Mixes in information from the earlier tokens. The token's query (q) is compared with the keys (k) and values (v) of every earlier token; keys and values are kept in the KV cache so they are computed only once. How this comparison works will be explained on a **Transformer** page.
-   * **Feed-forward (gate, up, down):** Works on this token alone. The list is widened from 4096 to 14,336 numbers, then brought back to 4096, which is where the 14,336 in the table sizes comes from.
+   * **Attention (q, k, v, o):** Mixes in information from the earlier tokens: the token's query (q) is compared with the keys (k) and values (v) of every earlier token, kept in the KV cache so they are computed only once (see **Transformer**).
+   * **Feed-forward (gate, up, down):** Works on this token alone: the list is widened from 4096 to 14,336 numbers, then brought back to 4096.
    * **Norms:** The two small tables rescale the list before each part, to keep its numbers in a stable range.
    * **Added back:** Each part's result is added to the list that came in, so a layer adjusts the list instead of replacing it.
+
+### From the final list to percentages
+
+At the end of step 2, the final list becomes one percentage per token of the vocabulary. The diagram shrinks the sizes so that every number can be seen: a final list of 4 numbers and 3 tokens.
+
+<figure><img src="../../.gitbook/assets/4.inside-a-model_ai-model-scores_v1.png" alt=""><figcaption></figcaption></figure>
+
+* **A, one score per row:** A token's score is its row of the output table times the final list, number by number, added up: for " mat", 0.8 × 0.5 + 0.1 × (−1.2) + 0.6 × 0.3 + 0.7 × 0.9 = 1.09. A row and the list agree when their numbers have the same sign in the same places, the bigger the better: the products are then positive and add up, while " sofa" disagrees where the list is strongest (−1.2) and scores lowest. Training shapes the rows and the layers so that the row of the right next token agrees with the final list. These raw scores are also called **logits**.
+* **B, scores into percentages (softmax):** Each score becomes 2.718 (the number e) to the power of the score, which makes it positive and keeps the order; dividing by the total makes them add up to 100 %: " mat" 51 %, " floor" 40 %, " sofa" 9 %. This list, the probabilities, is where the sampler starts; temperature divides the scores before this step (see [Sampling](../inference/text-generation/sampling.md)).
+* **C, at full size:** In Llama 3.1 8B the final list has 4096 numbers and the output table 128,256 rows: about 525 million multiplications for each token written, and most tokens get almost nothing (" Paris" can reach 91 %, most tokens stay below 0.001 %). Reading a token and scoring the next one are two different jobs, so Llama 3.1 8B learns a table for each; smaller models, such as Llama 3.2 1B, use one table for both to save weights.
 
 ### Precision and size
 

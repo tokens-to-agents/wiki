@@ -35,7 +35,7 @@ The map puts the six eras side by side, each with the idea it bet on and its mai
 
 <figure><img src="../../.gitbook/assets/0_overview_ai-history-overview-eras.png" alt=""><figcaption></figcaption></figure>
 
-<a href="https://explorer-vxv3.vercel.app/timeline" class="button secondary">Every event, filtered by topic ↗</a>
+<a href="https://explorer-one-phi.vercel.app/timeline" class="button secondary">Every event, filtered by topic ↗</a>
 
 * **Early AI** **(1943–1992):** Researchers try to write intelligence down as rules. It works on narrow problems (logic, chess, configuring computers) and fails when the world is too large to describe by hand. Promises run ahead of results twice, and funding collapses twice: the two AI winters.
 * **Machine learning** **(1993–2011):** Programs learn their rules from examples instead of being given them: spam filters, recommendations, statistical translation. Data, computing power and learning methods grow through the era.
