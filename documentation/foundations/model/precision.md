@@ -43,7 +43,7 @@ A computer stores every number as a row of **bits**, switches that are either 0 
 
 ### One weight in 32 and 16 bits
 
-FP32 and BF16 write a number the way scientific notation does, in powers of 2. The rule is fixed by the format and the same for every model, so the bits alone are enough to know the number: no step or other value is stored next to them. Example: weight A1 of the first attention table of Llama 3.1 8B (an illustrative value, see [Inside a model](inside-a-model.md)), from the end of training to the published BF16 version.
+FP32 and BF16 write a number the way scientific notation does, in powers of 2. The rule is fixed by the format and the same for every model, so the bits alone are enough to know the number: no step or other value is stored next to them. Example: weight A1 of the first attention table of Llama 3.1 8B (an illustrative value, see [Inside a model](inside-a-model/)), from the end of training to the published BF16 version.
 
 <figure><img src="../../.gitbook/assets/what-a-model-is_ai-model-one-weight-in-bits_v1.png" alt=""><figcaption></figcaption></figure>
 

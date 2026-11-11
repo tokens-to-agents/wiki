@@ -40,7 +40,7 @@ The diagram compares how networks were trained on text before and after 2017. It
 
 This parallel work happens in training only. When a model writes an answer, the next word does not exist yet, so it still adds one token at a time, each one computed from everything written before it (see Text generation). What runs in parallel at each of those steps is the arithmetic inside the model: thousands of multiplications of the model's tables, shared among the GPU's cores (see GPU & memory).
 
-How attention compares words will be explained on a **Transformer** page; the tables a transformer stores are on Inside a model. For history, what matters is the consequence: the bottleneck moved from the architecture to the amount of data and computing power a lab could afford.
+How attention compares words is explained on the [Transformer](../../foundations/model/inside-a-model/transformer.md) page; the tables a transformer stores are on [Inside a model](../../foundations/model/inside-a-model/). For history, what matters is the consequence: the bottleneck moved from the architecture to the amount of data and computing power a lab could afford.
 
 #### Models grew 1,500-fold in two years
 

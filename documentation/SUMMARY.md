@@ -20,7 +20,9 @@
 
 * [Overview](foundations/overview.md)
 * [Model](foundations/model/README.md)
-  * [Inside a model](foundations/model/inside-a-model.md)
+  * [Inside a model](foundations/model/inside-a-model/README.md)
+    * [Transformer](foundations/model/inside-a-model/transformer.md)
+    * [Mixture of experts](foundations/model/inside-a-model/mixture-of-experts.md)
   * [How a model learns](foundations/model/how-a-model-learns.md)
   * [Precision](foundations/model/precision.md)
   * [Quantization](foundations/model/quantization/README.md)

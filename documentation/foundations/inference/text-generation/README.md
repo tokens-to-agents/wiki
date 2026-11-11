@@ -41,7 +41,7 @@ Each step runs the whole model once and returns one score per token of the vocab
 
 1. **Context:** Everything the model sees: system prompt, conversation, and the answer so far.
 2. **Model:** One full pass for the newest token: the token table gives its list, the 32 layers rework it, and the output table scores every possible next token. These tables are the model's weights; they do not change during use.
-3. **Scores:** One per possible token, converted to probabilities that add up to 100 % (see [how the scores are computed](../../model/inside-a-model.md#from-the-final-list-to-percentages)).
+3. **Scores:** One per possible token, converted to probabilities that add up to 100 % (see [how the scores are computed](../../model/inside-a-model/#from-the-final-list-to-percentages)).
 4. **Sampler:** Picks a token from that list, following your settings (see the [Sampling](sampling.md) page).
 5. **Append:** The token joins the context, and the loop starts again until an end-of-text token or a length limit. Only the chosen token goes round the loop: at the next turn, its row is read from the token table. The output table never becomes the input.
 

@@ -46,7 +46,7 @@ Adapting a model to a style, a face or a task changes its behaviour along few in
 
 <figure><img src="../../.gitbook/assets/1.LoRA_ai-lora-low-rank_v1.png" alt=""><figcaption></figcaption></figure>
 
-* **W:** One table of the model, for example `blk.0.attn_q` (see [Inside a model](inside-a-model.md)): 4096 × 4096 = 16.8 million weights. Frozen during training.
+* **W:** One table of the model, for example `blk.0.attn_q` (see [Inside a model](inside-a-model/)): 4096 × 4096 = 16.8 million weights. Frozen during training.
 * **B and A:** Two thin tables of 4096 × 16 and 16 × 4096: 131,072 numbers, 128 times fewer. Only these are trained, with the same loop as any training (see [How a model learns](how-a-model-learns.md)).
 * **Rank:** The thin dimension (16 here). Higher ranks capture more detail and make bigger files; 8 to 64 is common.
 * **At generation:** The engine uses W + strength × (B × A). Each table the LoRA targets has its own pair of thin tables.

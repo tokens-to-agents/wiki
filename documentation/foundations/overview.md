@@ -72,7 +72,7 @@ The model only writes text; everything an agent does in the world, the harness d
 ### Pages in this section
 
 * **Model**: how a model is made, what its versions contain, and how they are changed.
-  * [Inside a model](model/inside-a-model.md): parameters, tables, the files of a version, and how the tables connect. Two sub-pages zoom on the two parts of a layer: **Transformer** (attention) and **Mixture of experts** (a feed-forward part split into experts, a few used per token).
+  * [Inside a model](model/inside-a-model/): parameters, tables, the files of a version, and how the tables connect. Two sub-pages zoom on the two parts of a layer: [Transformer](model/inside-a-model/transformer.md) (attention) and [Mixture of experts](model/inside-a-model/mixture-of-experts.md) (a feed-forward part split into experts, a few used per token).
   * [How a model learns](model/how-a-model-learns.md): neurons, matrices and training: pre-training, post-training, reinforcement learning on checkable answers, distillation and scaling laws.
   * [Precision](model/precision.md): how a weight is written in bits (FP32, BF16), and how precision sets the size of a model.
   * [Quantization](model/quantization/): why and how a 16 GB model becomes a 5 GB version, block by block. Its sub-page, [Quantization formats](model/quantization/quantization-formats.md), reads names like Q4\_K\_M or IQ3\_M.

@@ -40,7 +40,7 @@ Each new token depends on all the tokens before it. Without a cache, the model w
 
 ### What is stored
 
-Inside each layer, **attention** lets the current token look back at the previous ones. For every token, the layer's `attn_q`, `attn_k` and `attn_v` tables compute three lists of numbers: a **query**, a **key** and a **value** (see [how the tables connect](../../model/inside-a-model.md#how-the-tables-connect)).
+Inside each layer, [attention](../../model/inside-a-model/transformer.md) lets the current token look back at the previous ones. For every token, the layer's `attn_q`, `attn_k` and `attn_v` tables compute three lists of numbers: a **query**, a **key** and a **value** (see [how the tables connect](../../model/inside-a-model/#how-the-tables-connect)).
 
 <figure><img src="../../../.gitbook/assets/1.kv-cache_ai-kv-qkv_v1.png" alt=""><figcaption></figcaption></figure>
 
@@ -49,13 +49,15 @@ Inside each layer, **attention** lets the current token look back at the previou
 * **Value (V):** The information a token passes on when it is attended to.
 * **What is kept:** Earlier tokens never change, so their keys and values stay valid: they are computed once and stored. The query only serves the current token and is dropped. Keys and values, stored for every token and every layer, make the KV cache.
 
+The query, key and value are lists, computed for each text; the tables q, k and v that make them are set by training and fixed at use. How a query meets the keys is on the Transformer page (see [one attention step](../../model/inside-a-model/transformer.md#one-attention-step)), and why training needs no cache in [Training, prompt and answer](../../model/inside-a-model/transformer.md#training-prompt-and-answer).
+
 ### How big it gets
 
 The cache size is a simple product, like the [size of a model](../../model/precision.md#how-big-a-model-is): number of elements × bytes per element. The difference is that the weights are fixed, while the cache grows with every token, read or written.
 
 <figure><img src="../../../.gitbook/assets/2.kv-cache_ai-kv-size_v1.png" alt=""><figcaption></figcaption></figure>
 
-* **Per token:** 2 (K and V) × 32 layers × 8 key-value heads × 128 numbers × 2 bytes = 128 KB for Llama 3.1 8B. These sizes come from the model's metadata: 32 layers, and keys and values of 1024 numbers (8 × 128) per token, the output size of the `attn_k` and `attn_v` tables (see [what is inside a version](../../model/inside-a-model.md#what-is-inside-a-version)).
+* **Per token:** 2 (K and V) × 32 layers × 8 key-value heads × 128 numbers × 2 bytes = 128 KB for Llama 3.1 8B. These sizes come from the model's metadata: 32 layers, and keys and values of 1024 numbers (8 × 128) per token, the output size of the `attn_k` and `attn_v` tables (see [what is inside a version](../../model/inside-a-model/#what-is-inside-a-version)).
 * **Per window:** 1.1 GB at 8k tokens, 4.3 GB at 32k, 17.2 GB at the model's maximum of 128k. At 128k the cache is three and a half times the Q4\_K\_M weights.
 * **Reserved upfront:** Engines allocate the cache for the full window when they load the model. In [llama.cpp](https://github.com/ggml-org/llama.cpp) and [TextGen](https://github.com/oobabooga/textgen) this is `ctx-size`; 128k tokens takes 17 GB even for a one-line chat.
 * **Quantized cache:** `q8_0` halves the cache (2.3 GB at 32k) with a loss that is usually hard to notice; `q4_0` divides it by 3.5, with a loss that shows on long contexts.
@@ -84,11 +86,11 @@ Once computed, the cache stays in memory. A follow-up question only needs the ne
 
 Cache size limits how many users and how much context a server can handle, so recent architectures shrink it.
 
-| Technique                         | Principle                                                            | Result                                                                       |
-| --------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| GQA (grouped-query attention)     | Several attention heads share one set of keys and values             | Llama 3.1 8B: 32 heads share 8 sets, 4× less cache per token than Llama 2 7B |
-| MLA (multi-head latent attention) | Keys and values are stored compressed and rebuilt when needed        | DeepSeek-V2: 93.3 % less cache than DeepSeek 67B                             |
-| Hybrid layers                     | Most layers keep a small fixed-size state instead of a growing cache | Qwen3-Next: 3 of every 4 layers use linear attention                         |
+| Technique                         | Principle                                                                                                               | Result                                                                       |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| GQA (grouped-query attention)     | Several attention heads share one set of keys and values (see [Heads](../../model/inside-a-model/transformer.md#heads)) | Llama 3.1 8B: 32 heads share 8 sets, 4× less cache per token than Llama 2 7B |
+| MLA (multi-head latent attention) | Keys and values are stored compressed and rebuilt when needed                                                           | DeepSeek-V2: 93.3 % less cache than DeepSeek 67B                             |
+| Hybrid layers                     | Most layers keep a small fixed-size state instead of a growing cache                                                    | Qwen3-Next: 3 of every 4 layers use linear attention                         |
 
 A model's parameter count does not tell what its context will cost. Check its architecture (layers, key-value heads) before opening a large window.
 

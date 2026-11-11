@@ -52,7 +52,7 @@ For the same 4.5 bits, every block now has its own scale and minimum: a tighter 
 
 ### S, M and L mixes
 
-A version holds hundreds of tables (9 per layer in Llama 3.1 8B, see [what is inside a version](../inside-a-model.md#what-is-inside-a-version)), and each table can use its own format. Some tables hurt quality much more than others when squeezed, so a version can give those few tables more bits. The suffix **S**, **M** or **L** says how many get the upgrade.
+A version holds hundreds of tables (9 per layer in Llama 3.1 8B, see [what is inside a version](../inside-a-model/#what-is-inside-a-version)), and each table can use its own format. Some tables hurt quality much more than others when squeezed, so a version can give those few tables more bits. The suffix **S**, **M** or **L** says how many get the upgrade.
 
 <figure><img src="../../../.gitbook/assets/2.quantization-formats_ai-quant-mixes_v1.png" alt=""><figcaption></figcaption></figure>
 
@@ -98,7 +98,7 @@ A GGUF file name states two separate choices: which model, and which version of 
 * **`Q4_K_M`:** The version: 4-bit codes (`Q4`), K-quant super-blocks (`K`), medium mix (`M`).
 * **`.gguf`:** The llama.cpp format. The quantization is stored in the file and repeated in its name.
 * **`.safetensors`:** A container for tensors that, unlike older pickle files, runs no code when loaded. It can hold 16-bit, 8-bit or 4-bit weights; `fp8` in a name is the publisher's label, and for an original model the precision is in `config.json` (`torch_dtype`).
-* **`A3B`:** A mixture-of-experts model with 3 B parameters active per token, out of 35 B in total.
+* **`A3B`:** A [mixture-of-experts](../inside-a-model/mixture-of-experts.md) model with 3 B parameters active per token, out of 35 B in total.
 * **`UD`, `XL`:** Unsloth's "Dynamic" mix, with more tables kept at 8 or 16 bits.
 * **`00001-of-00003`:** A version too big for one file, split into parts. All parts are needed; the engine is pointed at the first one.
 * **`base`:** In Flux 2 Klein, the full model; the name without `base` is the distilled model, trained to work in 4 steps. Two models, not two versions: their weights differ.

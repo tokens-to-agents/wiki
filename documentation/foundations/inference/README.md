@@ -44,7 +44,7 @@ layout:
 **Text**, one token at a time. See [Text generation](text-generation/).
 
 * **4a, tokens:** The prompt is cut into [tokens](text-generation/tokens.md) from the model's vocabulary, plus a few special tokens from the chat template that mark who is speaking.
-* **4b, prefill:** The model reads all the prompt's tokens at once, through its 32 layers, and stores what each leaves behind, its keys and values, in the KV cache, so it is never computed again. A long pasted document makes this take a few seconds: the wait before the first word, the **time to first token**.
+* **4b, prefill:** The model [reads all the prompt's tokens at once](../model/inside-a-model/transformer.md#training-prompt-and-answer), through its 32 layers, and stores what each leaves behind, its keys and values, in the KV cache, so it is never computed again. A long pasted document makes this take a few seconds: the wait before the first word, the **time to first token**.
 * **4c, the loop:** The answer is written one token per turn: the newest token goes through the 32 layers, the model scores all 128,256 tokens of the vocabulary, the **sampler** picks one (see [Sampling](text-generation/sampling.md)), and the token joins the answer and the KV cache, until an end-of-text token or the length limit. The map shows the sixth turn: after "The capital of France is", " Paris" comes out at 91 % (an illustrative figure). Reasoning models first write thinking tokens in this same loop (see **Reasoning**).
 
 **Image**, in a fixed number of steps. See [Image & video](image-and-video.md).
@@ -57,7 +57,7 @@ layout:
 **Pictures and sound**, at both ends of the text loop:
 
 * **Speech in:** A voice app passes the sound to a **speech-to-text** model, such as Whisper, which writes down the words it hears; they become the prompt, and the loop runs as for typed text. Whisper large-v3 reads 30 seconds of sound at a time. See **Audio & speech**.
-* **Photo in:** A **multimodal** model has a **vision encoder**, a small model that cuts the picture into patches and turns each into a list of numbers; these lists enter where a text token's row of the token table would (see [how the tables connect](../model/inside-a-model.md)). They are called **image tokens**, but they are not in the vocabulary: Gemma 3 4B turns any photo into 256 of them, and prefill and the loop then run as for text. In llama.cpp the encoder is a separate small file (`mmproj`); Llama 3.1 8B has none and reads text only. See **Multimodal models**.
+* **Photo in:** A **multimodal** model has a **vision encoder**, a small model that cuts the picture into patches and turns each into a list of numbers; these lists enter where a text token's row of the token table would (see [how the tables connect](../model/inside-a-model/)). They are called **image tokens**, but they are not in the vocabulary: Gemma 3 4B turns any photo into 256 of them, and prefill and the loop then run as for text. In llama.cpp the encoder is a separate small file (`mmproj`); Llama 3.1 8B has none and reads text only. See **Multimodal models**.
 * **Speech out:** A **text-to-speech** model reads the answer aloud.
 
 The prompt is everything the model reads before it answers, a photo included; some multimodal models also read video, as a series of pictures. Making a picture or a piece of music is a different job, done by generation models such as the image branch of the map.

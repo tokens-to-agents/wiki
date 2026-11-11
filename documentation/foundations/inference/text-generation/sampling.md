@@ -37,7 +37,7 @@ Sampling settings run as a chain. Each step receives the list of candidates from
 
 
 
-* **Logits:** The raw score the model gives each of the 128,256 tokens of Llama 3.1's vocabulary, computed by its output table. **Softmax** converts them into probabilities that add up to 100 % (both shown step by step in [from the final list to percentages](../../model/inside-a-model.md#from-the-final-list-to-percentages)).
+* **Logits:** The raw score the model gives each of the 128,256 tokens of Llama 3.1's vocabulary, computed by its output table. **Softmax** converts them into probabilities that add up to 100 % (both shown step by step in [from the final list to percentages](../../model/inside-a-model/#from-the-final-list-to-percentages)).
 * **Penalties:** Lower the score of tokens that already appear in the text, to fight repetition.
 * **Filters (top-k, top-p, min-p):** Remove unlikely candidates without changing the relative odds of the others.
 * **Temperature:** Changes the odds themselves, without removing any candidate.

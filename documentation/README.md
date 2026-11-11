@@ -42,7 +42,9 @@ The wiki follows one path: from the smallest unit a model handles (a **token**, 
 * **Sidebar:** Pages are grouped by section, in reading order.
 * **Search:** The search bar at the top finds any term or page.
 * **Definitions:** Each page defines its terms the first time they appear, or links to the page that does.
+* **Deep dives:** A page with a magnifying-glass icon 🔍​ in the sidebar opens one mechanism further than the main path needs, such as [Transformer](foundations/model/inside-a-model/transformer.md); the pages around it make sense without it.
 
 {% hint style="info" %}
 This wiki is independent and not affiliated with any AI company. Models, specs, prices and defaults change fast: always check official documentation before relying on a number.
 {% endhint %}
+

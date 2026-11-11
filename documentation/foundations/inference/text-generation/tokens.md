@@ -37,8 +37,8 @@ A token is a whole word, part of a word, a space plus a word, or punctuation. Th
 
 * **Letters:** "Strawberry" is three tokens (`Str`, `aw`, `berry`), which is why models miscount letters while handling complex topics well.
 * **Spaces:** A space belongs to the token that follows it: " is" (374) in "The cat is on the mat" and "is" (285) at the end of "assis" are two different tokens, with two different rows. In the diagrams, \_ draws that space; the real underscore is another character (62 in Llama 3, where the space alone is 220).
-* **A word in several pieces:** The tokens of your prompt are read all at once (the prefill, step 4b of the Inference map), each taking in only the tokens before it; the answer then comes one token per turn. "Strawberry" arrives as "Str", "aw" and "berry": through attention, the last piece takes in the two before it, and research on Llama models finds that their early and middle layers rebuild the whole word there (see **Transformer**).
-* **One piece, several meanings:** " chat" (6369) is the same token in "Le chat" and in "Let's chat". The model tells the French cat from the English verb by the tokens around it, which the attention part of each layer mixes in (see [how the tables connect](../../model/inside-a-model.md#how-the-tables-connect)).
+* **A word in several pieces:** The tokens of your prompt are read all at once (the prefill, step 4b of the Inference map), each taking in all the tokens before it, never a later one; the answer then comes one token per turn. "Strawberry" arrives as "Str", "aw" and "berry": through attention, the last piece takes in the two before it, and research on Llama models finds that their early and middle layers rebuild the whole word there (see [Transformer](../../model/inside-a-model/transformer.md)).
+* **One piece, several meanings:** " chat" (6369) is the same token in "Le chat" and in "Let's chat". The model tells the French cat from the English verb by the tokens around it, which the attention part of each layer mixes in (see [how the tables connect](../../model/inside-a-model/#how-the-tables-connect)).
 * **Languages:** Nothing is translated: French is cut into pieces of French, and takes more tokens because tokenizers are built mostly from English. "The cat sat on the mat" takes 6 tokens, "Le chat est assis sur le tapis" 9; the same paragraph took 51 tokens in English and 61 in French with the GPT-4o tokenizer (+20 %).
 * **Cost:** More tokens mean more memory, slower generation and a higher bill on paid APIs, for the same content.
 
@@ -77,7 +77,7 @@ Each lab picks a size: 32,000 for Llama 2, 128,256 for Llama 3, about 200,000 fo
 ### The vocabulary
 
 * **Size:** Each model family has its own vocabulary, shared by all its sizes: 128,256 tokens for Llama 3, 32,000 for Llama 2, about 200,000 for OpenAI's GPT-4o tokenizer (see why, above).
-* **Rows:** Each token is one row of the model's token table: 128,256 rows of 4096 numbers in Llama 3.1 8B (see [Inside a model](../../model/inside-a-model.md)). Llama 3.1 8B, 70B and Llama 3.2 1B share one vocabulary, so a bigger one can teach a smaller one token by token (see [distillation](../../model/how-a-model-learns.md#distillation)).
+* **Rows:** Each token is one row of the model's token table: 128,256 rows of 4096 numbers in Llama 3.1 8B (see [Inside a model](../../model/inside-a-model/)). Llama 3.1 8B, 70B and Llama 3.2 1B share one vocabulary, so a bigger one can teach a smaller one token by token (see [distillation](../../model/how-a-model-learns.md#distillation)).
 * **Meaning:** The number says nothing about the meaning: " is" (374) sits between "ame" (373) and "pe" (375). What a token means is in its row and, above all, in how the layers combine it with the tokens around it.
 
 ### Other kinds of tokens
