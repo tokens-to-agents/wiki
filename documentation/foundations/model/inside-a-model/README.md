@@ -71,27 +71,6 @@ A version is like a spreadsheet workbook: a short description of the design (the
 * **Token vs parameter:** A token is a piece of text from the model's fixed vocabulary; training texts, your prompt and the model's answers are all cut into tokens. While the model reads a token, it copies the token's row of the token table (the embedding table): a list of 4096 numbers, its **embedding**, which the layers then rework. Only the weights are stored in the file; the lists are computed as the model runs and then discarded.
 * **No stored content:** The files hold no sentences, pictures or database. The only words in them are the metadata and the vocabulary.
 
-<details>
-
-<summary>Where 8.03 billion parameters come from (Llama 3.1 8B)</summary>
-
-| Part                                  | \[rows × columns]       | Parameters        |
-| ------------------------------------- | ----------------------- | ----------------- |
-| Attention: q and o (attention output) | \[4096 × 4096], twice   | 33.6 M per layer  |
-| Attention: key and value              | \[1024 × 4096], twice   | 8.4 M per layer   |
-| Feed-forward: gate and up             | \[14336 × 4096], twice  | 117.4 M per layer |
-| Feed-forward: down                    | \[4096 × 14336]         | 58.7 M per layer  |
-| Two norms: attn\_norm, ffn\_norm      | \[4096], twice          | 8,192 per layer   |
-| One layer: 9 tables                   |                         | 218.1 M           |
-| 32 layers                             |                         | 6.98 B            |
-| Token table + output table            | \[128256 × 4096], twice | 1.05 B            |
-| Final norm                            | \[4096]                 | 4,096             |
-| **Total: 291 tables**                 |                         | **8.03 B**        |
-
-Every size here is a design choice: 4096 is the width, 1024 the size of keys and values (8 groups of 128, see the [KV cache](../../inference/text-generation/kv-cache.md) page), 14336 the width of the feed-forward part, and **128,256 the number of tokens in the vocabulary.**
-
-</details>
-
 ### How the tables connect
 
 The tables are used in a fixed order. The diagram follows " is", the last token of "The capital of France is". The same path runs at every use, with the tables fixed, and in training, where a correction of every table follows (see How a model learns).
