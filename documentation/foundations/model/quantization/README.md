@@ -150,7 +150,7 @@ This is where most quantization research happens: where to place the values (INT
 {% step %}
 #### When nothing fits
 
-* [ ] Shrink the context or quantize the KV cache first (see [when it does not fit](../../inference/text-generation/kv-cache.md#when-it-does-not-fit))
+* [ ] Shrink the context or quantize the KV cache first (see [how big it gets](../../inference/text-generation/kv-cache.md#how-big-it-gets))
 * [ ] Then switch to a smaller model, rather than going below 4 bits
 {% endstep %}
 {% endstepper %}

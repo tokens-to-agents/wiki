@@ -90,11 +90,11 @@ When every weight takes the same space, the size of a version is a multiplicatio
 
 <figure><img src="../../.gitbook/assets/what-a-model-is_ai-model-size_v1.png" alt=""><figcaption></figcaption></figure>
 
-* **Example:** 8.03 billion parameters × 2 bytes (16 bits) = 16.1 billion bytes = 16.1 GB.
+* **Example:** 8.03 billion parameters × 2 bytes (16 bits) = 16.1 billion bytes = 16.1 GB. Where the 8.03 billion come from is traced in [the numbers of the design](inside-a-model/#the-numbers-of-the-design).
 * **16 bits:** How most models are published. A 70B model takes 140 GB.
 * **8 and 4 bits:** Quantized versions of the same model: about 70 GB and 35 GB for a 70B model.
 * **Real versions:** A little bigger than the formula. Quantized versions also store one step per block of weights, as explained in [what 4 bits means](quantization/#what-4-bits-means): Llama 3.1 8B at Q4\_K\_M is 4.92 GB, not 4 GB.
-* **Memory to plan:** The version must fit in the GPU's VRAM, or in a Mac's unified memory, with 1 to 3 GB more for the conversation, which grows with its length. Where that memory sits is covered on the [GPU & memory](../inference/gpu-and-memory.md) page.
+* **Memory to plan:**&#x54;he version must fit in the GPU's VRAM, or in a Mac's unified memory, with room for the conversation: the [KV cache](../inference/text-generation/kv-cache.md#how-big-it-gets), 128 KiB per token of the context window for Llama 3.1 8B, so 1.1 GB for 8,192 tokens. Where that memory sits is covered on the [GPU & memory](../inference/gpu-and-memory.md) page.
 
 ### Resources
 
