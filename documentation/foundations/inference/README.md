@@ -32,20 +32,20 @@ layout:
 
 ### The map
 
-<figure><img src="../../.gitbook/assets/0.inference_ai-inference-hub-map_v2.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/0.inference_ai-inference-hub-map_v3.png" alt=""><figcaption></figcaption></figure>
 
-1. **Download:** The version comes from the model's page on Hugging Face (see Model) and is stored on the disk once.
+1. **Download:** The version comes from the model's page on Hugging Face (see [Model](../model/)) and is stored on the disk once.
 2. **Prompt:** Text, speech, or a photo with a question, typed in the **app**, here Ollama. The app is built on an **engine**, here [llama.cpp](https://github.com/ggml-org/llama.cpp), which loads the file, cuts the prompt into tokens, runs the model's math and the sampler; others exist, such as MLX on Macs, vLLM on servers and [PyTorch](https://pytorch.org) for images. Model and engine are independent: a version runs in any engine that reads its format (`.gguf` in llama.cpp, `.safetensors` in PyTorch).
 3. **Use the hardware**, in two parts:
-   * **3a, load:** The engine copies the weights from the disk into the **VRAM**, the GPU's own memory, once. It also reserves room for the [KV cache](text-generation/kv-cache.md), the keys and values of every token of the conversation: 128 KiB per token, so 1.1 GB for an 8,192-token window. Layers that do not fit in VRAM can wait in the computer's **system RAM** (offloading), at a large cost in speed.
+   * **3a, load:** The engine copies the weights from the disk into the **VRAM**, the GPU's own memory, once. It also reserves room for the [KV cache](text-generation/kv-cache.md), the keys and values of every token of the conversation: 128 KiB per token, so 1.07 GB for an 8,192-token window. Layers that do not fit in VRAM can wait in the computer's **system RAM** (offloading), at a large cost in speed.
    * **3b, run:** For each operation of the model, such as "multiply these two tables", the engine calls a **kernel**, a small GPU program provided by the GPU's toolkit (CUDA on NVIDIA, Metal on Macs), and the driver hands it to the chip. The GPU's 21,760 cores each take a share of the work: about 8 billion multiply-adds per token, one per weight. See [GPU & memory](gpu-and-memory.md).
 4. **Compute:** The results feed one of two loops.
 
 **Text**, one token at a time. See [Text generation](text-generation/).
 
 * **4a, tokens:** The prompt is cut into [tokens](text-generation/tokens.md) from the model's vocabulary, plus a few special tokens from the chat template that mark who is speaking.
-* **4b, prefill:** The model [reads all the prompt's tokens at once](../model/inside-a-model/transformer.md#training-prompt-and-answer), through its 32 layers, and stores what each leaves behind, its keys and values, in the KV cache, so it is never computed again. A long pasted document makes this take a few seconds: the wait before the first word, the **time to first token**.
-* **4c, the loop:** The answer is written one token per turn: the newest token goes through the 32 layers, the model scores all 128,256 tokens of the vocabulary, the **sampler** picks one (see [Sampling](text-generation/sampling.md)), and the token joins the answer and the KV cache, until an end-of-text token or the length limit. The map shows the sixth turn: after "The capital of France is", " Paris" comes out at 91 % (an illustrative figure). Reasoning models first write thinking tokens in this same loop (see **Reasoning**).
+* **4b, prefill:** The model [reads all the prompt's tokens at once](../model/inside-a-model/transformer.md#training-prompt-and-answer), through its 32 layers, and stores what each leaves behind, its keys and values, in the KV cache, so it is never computed again. A long pasted document makes this take a few seconds: the wait before the first word, the **time to first token**. Prefill and decode run the same pass, for the whole prompt or for one token (see [prefill and decode](text-generation/#prefill-and-decode)).
+* **4c, the loop (decode):** The answer is written one token per turn: the newest token goes through the 32 layers, the model scores all 128,256 tokens of the vocabulary, the **sampler** picks one (see [Sampling](text-generation/sampling.md)), and the token joins the answer and the KV cache, until the model writes its end token or a length limit is reached (see [how an answer ends](text-generation/#how-an-answer-ends)). The map shows the sixth turn: after "The capital of France is", " Paris" comes out at 91 % (an illustrative figure). Reasoning models first write thinking tokens in this same loop (see **Reasoning**).
 
 **Image**, in a fixed number of steps. See [Image & video](image-and-video.md).
 

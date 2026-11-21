@@ -63,24 +63,25 @@ The cache is not a separate file: it sits in VRAM beside the weights, as one **s
 3. **The newest token:** During the answer, one token per turn enters the model: here " Paris", written at the previous turn. The five earlier columns are not run again: their keys and values, computed at the prefill, are already rows 1 to 5 of every section.
 4. **Each layer writes, then reads:** In each layer, " Paris" adds its key and value as row 6 of that layer's section, then each of its 32 heads reads every row, 1 to 6. At each turn the newest query is compared with every key of the section again, so the reading grows with the conversation; the rows themselves are never computed again. The 32 sections differ, because each layer computes its keys and values from the list as it arrives there.
 5. **Output:** After the 32 layers, the final norm and the output table score every token of the vocabulary, and the sampler picks "."; it goes to the app, after " Paris".
-6. **Next turn:** "." goes straight back in as the newest token and becomes row 7 of every section. Each turn repeats steps 3 to 6 only: nothing is sent again and nothing is compared, until the model writes its end token.
+6. **Next turn:** "." goes straight back in as the newest token and becomes row 7 of every section. Each turn repeats steps 3 to 6 only: nothing is sent again and nothing is compared, until the model writes its [end token](./#how-an-answer-ends).
 
 A row holds only numbers, 8 keys and 8 values of 128 in each layer; the token names on the diagram are labels for the reader. The row number is the token's position: the engine keeps the rows in the order of the text. A row is not a row of the token table and holds no weight: the model learns nothing from it, and it is gone when the conversation is cleared or the model unloaded.
 
 #### One conversation, message by message
 
-A model keeps nothing between two messages, so the app sends the whole conversation every time; the cache makes this cheap, because the engine computes only the tokens it has not read yet. The diagram zooms on steps 1 and 2 of the map.
+The app sends the whole conversation with every message, and the engine computes only the tokens it has not read yet: the cache makes resending cheap. The diagram zooms on steps 1 and 2 of the map.
 
 <figure><img src="../../../.gitbook/assets/3.kv-cache_ai-kv-conversation_v2.png" alt=""><figcaption></figcaption></figure>
 
 1. **Request 1, the prefill:** The system prompt and your message, 28 tokens. Your message counts 16: "What is the capital of France?" is 7, and the chat template adds 9 that mark who speaks, the end of the message and the start of the answer (written in full on the diagram). They go through the model in one pass and fill the cache; that pass is the wait before the first word, the **time to first token**.
 2. **Answer 1, the loop:** One token per turn, each reading the rows before it and adding its own.
-3. **Request 2:** The app sends 49 tokens, everything so far plus your new message. Once, before the layers, the engine compares their numbers with those of the 35 tokens it holds rows for: they are equal up to position 35 (" Paris" 12366, "." 13), and token 36, the end token 128009, has no row. So it computes 14 tokens, and every layer reads its own 35 kept rows.
+3. **Request 2:** The app sends 49 tokens, everything so far plus your new message. Once, before the layers, the engine compares their numbers with those of the 35 tokens it holds rows for: they are equal up to position 35 (" Paris" 12366, "." 13), and token 36, the [end token](./#how-an-answer-ends) 128009, has no row. So it computes 14 tokens, and every layer reads its own 35 kept rows.
 4. **Answer 2:** The loop again. Each turn reads a longer cache, so a long conversation writes more slowly than a fresh one.
 
 * **The catch:** Every row was computed from all the tokens before it. If one token changes near the start, such as a time written at the top of the system prompt (token 11 is now "33" where the row holds "32"), no row after it matches and all are computed again. This is why a prompt puts what never changes first (instructions, documents) and what changes last (date, user data).
 * **Without the cache:** An engine that has lost its cache (restarted, or busy with other users) computes everything again: the answer starts later.
 * **Paid APIs:** The same mechanism is sold as prompt caching. Anthropic bills cached input at 10 % of the normal input price on most models, down to 2.5 % on its newest, and keeps it 5 minutes, refreshed at each use.
+* **Why the whole text:** The engine's interface keeps no conversation: each request carries all of it, so that any engine can answer it, even one that has lost its rows, and so that the app stays free to change the history (edit a message, drop old ones, summarise). Some paid APIs keep the conversation on their side, such as OpenAI's [Responses API](https://developers.openai.com/api/docs/guides/conversation-state) with `previous_response_id`: the app then sends only the new message, and every earlier token is still billed as input.
 
 #### One layer, at one turn
 
@@ -95,7 +96,7 @@ The diagram zooms on step 4 of the map, in blk.0: what " Paris" computes, writes
 
 #### How big it gets
 
-Each section holds one row per token of **the context window**. The size of the cache is a multiplication, like the [size of a model](../../model/precision.md#how-big-a-model-is): how many numbers, times the bytes each one takes. Every count comes from [the design numbers of Llama 3.1 8B](../../model/inside-a-model/#the-numbers-of-the-design).
+Each section holds one row per token of [the context window](./#the-context-window). The size of the cache is a multiplication, like the [size of a model](../../model/precision.md#how-big-a-model-is): how many numbers, times the bytes each one takes. Every count comes from [the design numbers of Llama 3.1 8B](../../model/inside-a-model/#the-numbers-of-the-design).
 
 <figure><img src="../../../.gitbook/assets/5.kv-cache_ai-kv-size_v2.png" alt=""><figcaption></figcaption></figure>
 
@@ -122,6 +123,6 @@ Two other things share the name only. TeaCache and MagCache, in video tools such
 
 * Query, key and value as a search: [Transformer Explainer](https://poloclub.github.io/transformer-explainer/) (Georgia Tech, interactive)
 * Engine settings: [llama.cpp server README](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md) (`cache_prompt`, cache types, context size) | [Ollama, context length](https://docs.ollama.com/context-length)
-* Prompt caching: [Anthropic documentation](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
+* Prompt caching: [Anthropic documentation](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) | [OpenAI, conversation state](https://developers.openai.com/api/docs/guides/conversation-state) (`previous_response_id`, earlier tokens billed)
 * Tokenizer: [llama3-tokenizer-js](https://github.com/belladoreai/llama3-tokenizer-js), used for the token counts of the conversation
 * Papers: [GQA, Ainslie et al. 2023](https://arxiv.org/abs/2305.13245) | [DeepSeek-V2 (MLA)](https://arxiv.org/abs/2405.04434) | [vLLM, Kwon et al. 2023](https://arxiv.org/abs/2309.06180) (rows handed out as needed) | [The Llama 3 Herd of Models](https://arxiv.org/abs/2407.21783) (context raised to 128K in six stages)

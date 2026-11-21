@@ -62,7 +62,7 @@ Memory **capacity** (GB) sets which models fit. Memory **bandwidth** (GB/s) sets
 
 * **Gaming GPUs:** The highest bandwidth, but limited capacity: 24 GB of VRAM on an RTX 4090, 32 GB on an RTX 5090.
 * **Apple Silicon:** Up to 128 GB of unified memory on an M5 Max and 512 GB on an M5 Ultra, at lower bandwidth than a high-end GPU.
-* **Speed ceiling:** Tokens per second ≈ bandwidth ÷ size of the version in memory. Llama 3.1 8B in Q4\_K\_M (4.92 GB) tops out around 364 tokens/s on an RTX 5090; Qwen3.5-27B at 4-bit (17 GB) around 105 tokens/s on the same card and 16 tokens/s on a Mac mini M4 Pro.
+* **Speed ceiling:** Tokens per second ≈ bandwidth ÷ size of the version in memory. Llama 3.1 8B in Q4\_K\_M (4.92 GB) tops out around 364 tokens/s on an RTX 5090; Qwen3.5-27B at 4-bit (17 GB) around 105 tokens/s on the same card and 16 tokens/s on a Mac mini M4 Pro. This ceiling is for writing the answer (decode); reading the prompt (prefill) is limited by the cores instead (see [prefill and decode](text-generation/#prefill-and-decode)).
 * **MoE models:** [Mixture-of-experts](../model/inside-a-model/mixture-of-experts.md) models read only their active parameters for each token. Qwen3.5-122B-A10B needs memory for 122 B parameters but reads about 10 B per token, so it runs much faster than its size suggests.
 
 Real speeds land below the ceiling, typically at 50 to 80 % of it. The conversation also takes memory and bandwidth, as detailed on the [KV cache](text-generation/kv-cache.md) page.
