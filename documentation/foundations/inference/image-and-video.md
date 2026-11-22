@@ -104,7 +104,7 @@ Video models use the same mechanism on a block of frames. All frames are denoise
 * **Example:** Wan 2.1 makes 5 seconds at 16 fps, 81 frames of 832 × 480.
 * **Compression:** Its VAE reduces time by 4 and each side by 8: 21 latent frames of 104 × 60.
 * **Why a block:** Denoised one by one, each frame would drift on its own: flicker, objects and faces changing between frames.
-* **Cost:** The whole block sits in memory at every step, which is why video needs far more VRAM and time than images. Offloading tools such as [Wan2GP](https://github.com/deepbeepmeep/Wan2GP) exist mainly for video (see the [GPU & memory](gpu-and-memory.md) page).
+* **Cost:** The whole block sits in memory at every step, which is why video needs far more VRAM and time than images. Offloading tools such as [Wan2GP](https://github.com/deepbeepmeep/Wan2GP) exist mainly for video (see the [GPU & memory](gpu-and-memory/) page).
 
 Video LoRAs such as "lightning" variants cut the number of steps to 4 or so (see the [LoRA](../model/lora.md) page).
 

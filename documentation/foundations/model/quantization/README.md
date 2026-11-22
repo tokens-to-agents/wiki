@@ -55,7 +55,7 @@ A smaller version does two things: it fits in memory that the original would ove
 <figure><img src="../../../.gitbook/assets/1.quantization_ai-quant-why_v1.png" alt=""><figcaption></figcaption></figure>
 
 * **Fit:** The 16-bit release of Llama 3.1 8B (16.1 GB) does not fit on a 16 GB card once the context is added; the 4-bit version (4.92 GB) leaves room to spare.
-* **Speed:** The speed ceiling is the memory bandwidth divided by the size of the version, so 3.3 times fewer bytes allows up to 3.3 times more tokens per second (see [capacity and bandwidth](../../inference/gpu-and-memory.md#capacity-and-bandwidth)).
+* **Speed:** The speed ceiling is the memory bandwidth divided by the size of the version, so 3.3 times fewer bytes allows up to 3.3 times more tokens per second (see [capacity and bandwidth](../../inference/gpu-and-memory/#capacity-and-bandwidth)).
 * **Cost:** A small loss of quality, measured on the formats page. Nothing is removed: Llama 3.1 8B keeps its 8.03 billion parameters, and every table its shape.
 
 ### One model, seven versions

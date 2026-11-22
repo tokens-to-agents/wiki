@@ -83,7 +83,7 @@ The same layers run at three moments: when the lab trains the model, when the mo
 * **B, prefill:** Your prompt has no answer to check against: its columns run in one pass, and only the last one's percentages are used, by the sampler. Their keys and values fill the KV cache; if the engine still holds the cache for the same beginning of the conversation, only the new tokens are computed (see [one conversation, message by message](../../inference/text-generation/kv-cache.md#one-conversation-message-by-message)). A long prompt is read in chunks (2,048 tokens by default in llama.cpp), with the same result.
 * **C, the loop:** The next token does not exist until the sampler picks it, so each turn adds one column: " Paris" reads the cached keys and values of the five columns before it and its own, then adds its own to the cache.
 
-Training works like a fill-in-the-blank exercise with the answer key; use is the same guess without the key, so nothing is corrected. Within a pass the columns are computed in parallel (see [GPU & memory](../../inference/gpu-and-memory.md)); at position 100,000, a token's query meets 100,000 keys, in each head of each layer.
+Training works like a fill-in-the-blank exercise with the answer key; use is the same guess without the key, so nothing is corrected. Within a pass the columns are computed in parallel (see [GPU & memory](../../inference/gpu-and-memory/)); at position 100,000, a token's query meets 100,000 keys, in each head of each layer.
 
 #### Heads
 

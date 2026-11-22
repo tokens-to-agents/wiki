@@ -39,7 +39,7 @@ An artificial neuron is a small calculation: multiply each input by the weight o
 * **Activation:** A simple rule then shapes the total, for example turning negative results into 0. Without it, stacking tables would add nothing.
 * **Row of neurons:** Several neurons reading the same inputs, each with its own weights.
 * **Matrix:** The weights of that row, one row of the matrix per neuron and one column per input. Computing every neuron at once is a single operation: the matrix multiplied by the list of inputs.
-* **Why matrices matter:** Running a model is mostly matrix multiplications, and GPUs are built to do them fast (see [GPU & memory](../inference/gpu-and-memory.md)).
+* **Why matrices matter:** Running a model is mostly matrix multiplications, and GPUs are built to do them fast (see [GPU & memory](../inference/gpu-and-memory/)).
 
 A real model chains many such matrices. In Llama 3.1 8B, each of the 32 layers holds 9 tables, and a token's list of 4096 numbers goes through them one after another; [how the tables connect](inside-a-model/#how-the-tables-connect) shows the path. Training uses the same path: the token goes through, the model predicts, and only then are the weights corrected.
 

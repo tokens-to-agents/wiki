@@ -78,7 +78,7 @@ The model only writes text; everything an agent does in the world, the harness d
   * [Quantization](model/quantization/): why and how a 16 GB model becomes a 5 GB version, block by block. Its sub-page, [Quantization formats](model/quantization/quantization-formats.md), reads names like Q4\_K\_M or IQ3\_M.
   * [LoRA](model/lora.md): specialising a model with a small file instead of a full copy.
 * **Inference**: what runs on your machine when you use a model.
-  * [GPU & memory](inference/gpu-and-memory.md): why AI runs on GPUs, why memory matters more than raw power, and how software reaches the chip.
+  * [GPU & memory](inference/gpu-and-memory/): why AI runs on GPUs and why memory matters more than raw power, with [Engines & kernels](inference/gpu-and-memory/engines-and-kernels.md) (the app, the engine and the model, and how software reaches the chip).
   * [Text generation](inference/text-generation/): tokens, the generation loop and the context window, with [Tokens](inference/text-generation/tokens.md) (pieces of text and the tokenizer), [Sampling](inference/text-generation/sampling.md) (the settings that pick each token), [KV cache](inference/text-generation/kv-cache.md) (the memory of a conversation) and **Reasoning** (thinking tokens before the answer).
   * **Multimodal models**: how a picture or a sound becomes tokens a language model reads.
   * [Image & video](inference/image-and-video.md): diffusion, the latent space, CFG and video.

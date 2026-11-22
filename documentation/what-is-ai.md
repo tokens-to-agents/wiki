@@ -64,7 +64,7 @@ The AI industry is a chain: each link makes something and passes it on to the ne
 
 <figure><img src=".gitbook/assets/2.what-is-ai_ai-what-is-ai-what-is-ai-value-chain_v1.png" alt=""><figcaption></figcaption></figure>
 
-* **Chips:** GPUs and other AI chips do the math of training and running models. NVIDIA, for example, designs GPUs that TSMC manufactures, mainly in Taiwan (**Infrastructure**; how a GPU runs a model is on [GPU & memory](foundations/inference/gpu-and-memory.md)).
+* **Chips:** GPUs and other AI chips do the math of training and running models. NVIDIA, for example, designs GPUs that TSMC manufactures, mainly in Taiwan (**Infrastructure**; how a GPU runs a model is on [GPU & memory](foundations/inference/gpu-and-memory/)).
 * **Data centers:** Buildings full of GPUs, with the power and cooling they need, now planned in gigawatts: OpenAI's Stargate site in Abilene, Texas, is projected at 1.2 GW.
 * **Labs:** Companies that train models and sell access to them, such as OpenAI, Anthropic, Google DeepMind, Meta, DeepSeek and Mistral (**Labs**, in Ecosystem). Training runs on GPU-hours they own or rent.
 * **Models:** What a lab ships: the trained weights. Closed models, such as GPT-6 Astra and Gemini 4 Argon, are reachable only through the lab's service; open-weight models, such as DeepSeek V4 and Llama 3.1 8B, can be downloaded (**Models** section).
