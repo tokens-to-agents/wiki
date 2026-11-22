@@ -108,7 +108,7 @@ Every size on this page follows from a few design numbers, written in the model'
 <figure><img src="../../../.gitbook/assets/5.inside-a-model_ai-model-numbers_v1.png" alt=""><figcaption></figcaption></figure>
 
 * **Config:** Seven numbers chosen by Meta before training, A to G, set every shape; training only fills in the values. G is the maximum [context window](../../inference/text-generation/#the-context-window), the longest the model was trained for. H is the precision of the BF16 version.
-* **Weights:** The 291 tables and their 8,030,261,248 weights, stored in the file and fixed at use. At 16 bits, 2 bytes each, they make the 16.06 GB of the BF16 version; how a number is written in bits, and why fewer bits give a smaller version, is on the [Precision](../precision.md) page.
+* **Weights:** The 291 tables and their 8,030,261,248 weights, stored in the file and fixed at use. At 16 bits, 2 bytes each, they make the 16.06 GB of the BF16 version; how a number is written in bits, and why fewer bits give a smaller version, is on the [Precision](../precision.md#how-big-a-model-is) page.
 * **Lists:** Computed for each token as the model runs, never stored: a list of 4096 numbers, and in each layer a query cut into 32 pieces of 128, one per head, and a key and a value cut into 8 pieces each. 128 is 4096 ÷ 32 heads; it is not written in the file.
 * **KV cache:** The keys and values kept at use: 128 KiB per token, times the window: 1.07 GB for 8,192 tokens, 17.2 GB for the maximum of 131,072 (see [how big it gets](../../inference/text-generation/kv-cache.md#how-big-it-gets)).
 

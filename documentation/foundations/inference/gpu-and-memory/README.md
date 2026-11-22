@@ -23,7 +23,7 @@ layout:
 
 # GPU & memory
 
-A GPU is a processor built for thousands of identical calculations at once, with its own fast memory, the **VRAM**. For AI, the size and speed of that memory matter more than the number of cores. On the [Inference](../) map, this page zooms on step 3: loading the model into memory (3a) and running its math on the chip (3b). The software that drives the chip, from the app to the kernels, is on Engines & kernels.
+A GPU is a processor built for thousands of identical calculations at once, with its own fast memory, the **VRAM**. For AI, the size and speed of that memory matter more than the number of cores. On the [Inference](../) map, this page zooms on step 3: loading the model into memory (3a) and running its math on the chip (3b). The software that drives the chip, from the app to the kernels, is on [Engines & kernels](engines-and-kernels.md).
 
 {% hint style="info" %}
 **Capacity decides if a model fits. Bandwidth decides how fast it runs.** Both are fixed when you buy the machine.
@@ -49,7 +49,9 @@ At startup (step 3a), the engine copies the weights from the disk into VRAM. Dur
 
 * **SSD:** Stores the version you downloaded. It is read once, when the model loads.
 * **VRAM:** The GPU's own memory, on the graphics card. Holds the weights and the [KV cache](../text-generation/kv-cache.md). An RTX 5090 reads its 32 GB at 1,792 GB/s.
+* **GPU cores:** The chip's calculators, 21,760 on an RTX 5090, grouped in blocks that each have a little memory of their own (see [inside the chip](./#inside-the-chip), below).
 * **System RAM:** The computer's main memory. Larger, but much slower for the GPU to reach. Layers that do not fit in VRAM wait here.
+* **PCIe:** The link between the computer and the graphics card, about 64 GB/s on PCIe 5.0 x16. It carries the model once, at load; during generation only the kernel launches and the scores cross it (see [one pass, in action](engines-and-kernels.md#one-pass-in-action)).
 * **Layers:** A model is a stack of layers, also called blocks (`blk.0` to `blk.31` in a `.gguf`), run one after another: 32 in Llama 3.1 8B, 80 in Llama 3.1 70B. This is why a model can be split by layer between VRAM and RAM.
 * **Offloading:** Running a model that does not fit in VRAM by keeping some layers in RAM. [llama.cpp](https://github.com/ggml-org/llama.cpp) computes those layers on the CPU (A; `-ngl` sets how many layers stay on the GPU). [ComfyUI](https://github.com/Comfy-Org/ComfyUI) and [Wan2GP](https://github.com/deepbeepmeep/Wan2GP) copy each waiting layer into VRAM just before its turn, then replace it with the next one (B).
 
